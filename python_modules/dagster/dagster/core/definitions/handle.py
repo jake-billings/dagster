@@ -148,18 +148,33 @@ class ExecutionTargetHandle:
 
     @classmethod
     def get_handle(cls, repo_or_pipeline):
+        '''Get the handle and, optionally, solid subset used to construct a repo or (sub-)pipeline.
+
+        Returns: Tuple[Union[RepositoryDefinition, PipelineDefinition], Optional[List[str]]]
+        '''
         check.inst_param(
             repo_or_pipeline, 'repo_or_pipeline', (RepositoryDefinition, PipelineDefinition)
         )
         return cls.__cache__.get(repo_or_pipeline)
 
     @classmethod
-    def cache_handle(cls, repo_or_pipeline_def, handle):
+    def cache_handle(cls, repo_or_pipeline_def, handle, solid_names=None):
+        '''Record a pipeline or repository in the cache.
+
+        Args:
+            repo_or_pipeline_def (Union[RepositoryDefinition, PipelineDefinition]): The repo or
+                pipeline definition for which to cache the handle.
+            handle (ExecutionTargetHandle): The handle to cache.
+            solid_names (Optional[List[str]]): The solid names constituting the constructed
+                sub-pipeline, if any; arg should be as for
+                dagster.core.definitions.pipeline.build_sub_pipeline.
+        '''
         check.inst_param(
             repo_or_pipeline_def, 'repo_or_pipeline_def', (RepositoryDefinition, PipelineDefinition)
         )
         check.inst_param(handle, 'handle', ExecutionTargetHandle)
-        cls.__cache__[repo_or_pipeline_def] = handle
+        check.opt_list_param(solid_names, 'solid_names', of_type=str)
+        cls.__cache__[repo_or_pipeline_def] = (handle, solid_names)
 
         return repo_or_pipeline_def
 

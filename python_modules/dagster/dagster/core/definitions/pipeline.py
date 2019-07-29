@@ -312,7 +312,7 @@ class PipelineDefinition(IContainSolids, object):
         return name in self._all_solid_defs
 
     def build_sub_pipeline(self, solid_subset):
-        return self if solid_subset is None else _build_sub_pipeline(self, solid_subset)
+        return self if solid_subset is None else build_sub_pipeline(self, solid_subset)
 
     def get_presets(self):
         return list(self._preset_dict.values())
@@ -346,7 +346,7 @@ def _dep_key_of(solid):
     return SolidInvocation(solid.definition.name, solid.name)
 
 
-def _build_sub_pipeline(pipeline_def, solid_names):
+def build_sub_pipeline(pipeline_def, solid_names):
     '''
     Build a pipeline which is a subset of another pipeline.
     Only includes the solids which are in solid_names.
